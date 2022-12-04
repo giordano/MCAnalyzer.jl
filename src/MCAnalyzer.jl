@@ -159,6 +159,8 @@ function llvm_march(march)
         :BDW => "broadwell",
         :SKL => "skylake",
         :SKX => "skx",
+        :SKX => "skx",
+        :A64FX => "a64fx",
     )
     @assert haskey(cpus, march) "Arch: $march not supported"
     return cpus[march]
@@ -175,10 +177,8 @@ Insert `iaca` and `llvm-mca` start markers at this position.
 """
 function mark_start()
     @asmcall("""
-    movl \$\$111, %ebx
-    .byte 0x64, 0x67, 0x90
     # LLVM-MCA-BEGIN
-    """, "~{memory},~{ebx}", true)
+    """, "~{memory}", true)
 end
 
 """
@@ -189,9 +189,7 @@ Insert `iaca` and `llvm-mca` end markers at this position.
 function mark_end()
     @asmcall("""
     # LLVM-MCA-END
-    movl \$\$222, %ebx
-    .byte 0x64, 0x67, 0x90
-    """, "~{memory},~{ebx}", true)
+    """, "~{memory}", true)
 end
 
 end # module
